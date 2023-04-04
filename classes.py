@@ -19,7 +19,6 @@ class SuperJob(Engine):
     """Методы SJ."""
 
     def __init__(self, keyword):
-        super().__init__()
         self.keyword = keyword
         self.parameters = None
 
@@ -70,14 +69,13 @@ class SuperJob(Engine):
 
 class HH(Engine):
     def __init__(self, keyword):
-        super().__init__()
         self.keyword = keyword
         self.parameters = {
             'text': self.keyword,
             'per_page': 100,
             'area': 113,
             'page': 0
-       }
+        }
 
     def get_request(self):
         response = requests.get('https://api.hh.ru/vacancies/', params=self.parameters)
@@ -124,5 +122,3 @@ class Vacancy:
 
     def __str__(self):
         return f'Название вакансии - {self.name}, З/П сосавляет - {self.salary()}'
-
-

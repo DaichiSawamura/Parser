@@ -33,24 +33,18 @@ class Connector:
         """
         if not os.path.isfile("filename.json"):
             raise FileNotFoundError("Файл filename.json отсутствует")
-        try:
-            with open(self.__data_file, 'r', encoding='windows-1251') as file:
-                json_reader = json.load(file)
-                print(len(json_reader))
-                for i in json_reader:
-                    if i.get('name') < 0:
-                        print('Something wrong')
-                    else:
-                        raise Exception
-        except Exception:
-            print('Файл filename.json поврежден')
+        with open(self.__data_file, 'r', encoding="utf8") as file:
+            json_reader = json.load(file)
+            print(len(json_reader))
+            if not isinstance(json_reader, list):
+                raise Exception('Файл должен содержать список')
 
     def insert(self, data):
         """
         Запись данных в файл с сохранением структуры и исходных данных
         """
-        with open('filename.json', 'a', encoding="UTF-8") as file:
-            json.dump(data, file, indent=2, ensure_ascii=False)
+        with open(self.__data_file, 'w', encoding="UTF-8") as file:
+            json.dump([i.to_dict() for i in data], file, indent=4, ensure_ascii=False, skipkeys=True, sort_keys=True)
 
     def select(self, query):
         """
@@ -60,7 +54,14 @@ class Connector:
         {'price': 1000}, должно отфильтровать данные по полю price
         и вернуть все строки, в которых цена 1000
         """
-        pass
+        result = []
+        with open(self.__data_file, 'r', encoding="UTF-8") as file:
+            data = json.load(file)
+        for item in data:
+            for key, value in query.items():
+                if item.get(key) == value:
+                    result.append(item)
+        return result
 
     def delete(self, query):
         """
@@ -68,8 +69,10 @@ class Connector:
         как в методе select. Если в query передан пустой словарь, то
         функция удаления не сработает
         """
-        pass
-
+        with open(self.__data_file, 'r', encoding="UTF-8") as file:
+            data = json.load(file)
+        if not query:
+            return data
 # if __name__ == '__main__':
 # df = Connector('df.json')
 #
