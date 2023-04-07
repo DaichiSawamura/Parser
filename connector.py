@@ -31,11 +31,13 @@ class Connector:
         Также проверить на деградацию и возбудить исключение
         если файл потерял актуальность в структуре данных
         """
-        if not os.path.isfile("filename.json"):
-            raise FileNotFoundError("Файл filename.json отсутствует")
+        if not os.path.isfile(self.data_file):
+            file = open("filename.json", "w+")
+            file.write("empty_list = []")
+            file.close()
+            raise FileNotFoundError(f"Файл {self.data_file} отсутствует")
         with open(self.__data_file, 'r', encoding="utf8") as file:
             json_reader = json.load(file)
-            print(len(json_reader))
             if not isinstance(json_reader, list):
                 raise Exception('Файл должен содержать список')
 
